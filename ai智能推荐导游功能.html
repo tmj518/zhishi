@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoyageAI | 智能旅行规划专家</title>
+    <link href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-100-M/font-awesome/6.0.0/css/all.min.css"  rel="stylesheet">
+    <link href="https://s2.ssl.qhres2.com/static/56662140ef7d5d03.css"  rel="stylesheet">
+    <script src="https://s2.ssl.qhres2.com/!2dd0bbf7/echats.js"></script> 
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2ecc71;
+            --accent: #e74c3c;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --gradient: linear-gradient(135deg, #3498db 0%, #2ecc71 100%);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* 导航栏 */
+        .navbar {
+            background: white;
+            box-shadow: var(--shadow);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            padding: 15px 0;
+        }
+        
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            color: var(--primary);
+            margin-right: 10px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .nav-links a {
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        
+        .nav-links a:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--primary);
+            transition: var(--transition);
+        }
+        
+        .nav-links a:hover:after {
+            width: 100%;
+        }
+        
+        .auth-buttons .btn {
+            margin-left: 15px;
+        }
+        
+        /* 英雄区域 */
+        .hero {
+            background: var(--gradient);
+            color: white;
+            padding: 180px 0 100px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80')  no-repeat center center/cover;
+            opacity: 0.2;
+            z-index: 0;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        
+        .hero p {
+            font-size: 20px;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+        
+        /* 搜索框 */
+        .search-box {
+            background: white;
+            border-radius: var(--radius);
+            padding: 10px;
+            box-shadow: var(--shadow);
+            display: flex;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .search-input {
+            flex: 1;
+            border: none;
+            padding: 15px 20px;
+            font-size: 16px;
+            outline: none;
+            border-radius: var(--radius) 0 0 var(--radius);
+        }
+        
+        .search-btn {
+            background: var(--dark);
+            color: white;
+            border: none;
+            padding: 0 30px;
+            border-radius: 0 var(--radius) var(--radius) 0;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+        }
+        
+        .search-btn:hover {
+            background: var(--primary);
+        }
+        
+        /* 功能区域 */
+        .features {
+            padding: 100px 0;
+            background: white;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .section-title h2 {
+            font-size: 36px;
+            color: var(--dark);
+            margin-bottom: 15px;
+        }
+        
+        .section-title p {
+            color: #777;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            text-align: center;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+        
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 30px;
+        }
+        
+        .feature-card h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        
+        /* 会员计划 */
+        .pricing {
+            padding: 100px 0;
+            background: #f5f7fa;
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .pricing-card {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 40px 30px;
+            text-align: center;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .pricing-card.popular  {
+            border: 2px solid var(--primary);
+        }
+        
+        .popular-tag {
+            position: absolute;
+            top: 15px;
+            right: -30px;
+            background: var(--primary);
+            color: white;
+            padding: 5px 40px;
+            transform: rotate(45deg);
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .pricing-card h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        
+        .price {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .price span {
+            font-size: 16px;
+            font-weight: 400;
+            color: #777;
+        }
+        
+        .pricing-features {
+            margin: 30px 0;
+            text-align: left;
+        }
+        
+        .pricing-features li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+        
+        .pricing-features li i {
+            color: var(--secondary);
+            margin-right: 10px;
+        }
+        
+        /* AI导游界面 */
+        .ai-guide {
+            padding: 100px 0;
+            background: white;
+        }
+        
+        .guide-container {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+        
+        .guide-content {
+            flex: 1;
+        }
+        
+        .guide-interface {
+            flex: 1;
+            background: #f5f7fa;
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            min-height: 500px;
+            position: relative;
+        }
+        
+        .chat-container {
+            height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding-right: 10px;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+        }
+        
+        .message.ai  {
+            justify-content: flex-start;
+        }
+        
+        .message.user  {
+            justify-content: flex-end;
+        }
+        
+        .message-content {
+            max-width: 80%;
+            padding: 12px 18px;
+            border-radius: 18px;
+            line-height: 1.4;
+        }
+        
+        .message.ai  .message-content {
+            background: #e3f2fd;
+            border-bottom-left-radius: 5px;
+            color: var(--dark);
+        }
+        
+        .message.user  .message-content {
+            background: var(--primary);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .chat-input {
+            display: flex;
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            right: 30px;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 30px 0 0 30px;
+            outline: none;
+            font-size: 16px;
+        }
+        
+        .chat-input button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0 25px;
+            border-radius: 0 30px 30px 0;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .chat-input button:hover {
+            background: var(--dark);
+        }
+        
+        /* 地图区域 */
+        .map-section {
+            height: 500px;
+            background: #eee;
+            position: relative;
+        }
+        
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+        
+        .map-overlay {
+            position: absolute;
+            bottom: 40px;
+            left: 40px;
+            background: white;
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            max-width: 300px;
+        }
+        
+        /* 行程规划 */
+        .itinerary {
+            padding: 100px 0;
+            background: #f5f7fa;
+        }
+        
+        .itinerary-card {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .day-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .day-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .day-date {
+            color: #777;
+        }
+        
+        .activity {
+            display: flex;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed #eee;
+        }
+        
+        .activity:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .activity-time {
+            min-width: 100px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .activity-details {
+            flex: 1;
+        }
+        
+        .activity-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--dark);
+        }
+        
+        .activity-location {
+            color: #777;
+            font-size: 14px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .activity-location i {
+            margin-right: 5px;
+        }
+        
+        .activity-description {
+            color: #555;
+            font-size: 15px;
+        }
+        
+        /* 底部 */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 60px 0 30px;
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-col h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-col h3:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: var(--primary);
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: #bbb;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .footer-links a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: var(--transition);
+        }
+        
+        .social-links a:hover {
+            background: var(--primary);
+            transform: translateY(-5px);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #bbb;
+            font-size: 14px;
+        }
+        
+        /* 按钮样式 */
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            cursor: pointer;
+            border: none;
+            font-size: 16px;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--dark);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: var(--dark);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        
+        .btn-outline:hover {
+            background: white;
+            color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.8s ease forwards;
+        }
+        
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+        
+        /* 响应式设计 */
+        @media (max-width: 992px) {
+            .guide-container {
+                flex-direction: column;
+            }
+            
+            .hero h1 {
+                font-size: 36px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero {
+                padding: 150px 0 80px;
+            }
+            
+            .hero h1 {
+                font-size: 32px;
+            }
+            
+            .hero p {
+                font-size: 18px;
+            }
+            
+            .section-title h2 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container navbar-container">
+            <div class="logo">
+                <i class="fas fa-compass"></i>
+                VoyageAI 
+            </div>
+            <div class="nav-links">
+                <a href="#features">功能</a>
+                <a href="#pricing">会员计划</a>
+                <a href="#guide">AI导游</a>
+                <a href="#itinerary">行程规划</a>
+            </div>
+            <div class="auth-buttons">
+                <a href="#" class="btn btn-outline">登录</a>
+                <a href="#" class="btn btn-primary">注册</a>
+            </div>
+        </div>
+    </nav>
+ 
+    <!-- 英雄区域 -->
+    <section class="hero">
+        <div class="container hero-content fade-in">
+            <h1>您的智能旅行规划专家</h1>
+            <p>基于AI技术的端到端旅行解决方案，为您提供个性化行程规划、实时导航、景点推荐和一站式预订服务</p>
+            <div class="search-box fade-in delay-1">
+                <input type="text" class="search-input" placeholder="您想去哪里旅行？例如：巴黎三日游">
+                <button class="search-btn">开始规划</button>
+            </div>
+        </div>
+    </section>
+ 
+    <!-- 功能区域 -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-title fade-in">
+                <h2>强大功能助力完美旅程</h2>
+                <p>VoyageAI整合多项AI技术，为您提供全方位的旅行服务体验</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card fade-in delay-1">
+                    <div class="feature-icon">
+                        <i class="fas fa-route"></i>
+                    </div>
+                    <h3>智能行程规划</h3>
+                    <p>基于您的偏好、预算和时间，AI自动生成最优行程路线，考虑景点距离、开放时间和人流预测</p>
+                </div>
+                <div class="feature-card fade-in delay-2">
+                    <div class="feature-icon">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </div>
+                    <h3>实时导航整合</h3>
+                    <p>无缝对接高德地图API，提供实时导航、交通建议和景点间最佳路线规划</p>
+                </div>
+                <div class="feature-card fade-in delay-3">
+                    <div class="feature-icon">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <h3>美食推荐系统</h3>
+                    <p>根据您的口味偏好和位置，推荐当地特色餐厅和必尝美食，支持在线预订</p>
+                </div>
+                <div class="feature-card fade-in delay-1">
+                    <div class="feature-icon">
+                        <i class="fas fa-cloud-sun"></i>
+                    </div>
+                    <h3>实时天气预测</h3>
+                    <p>整合天气API，提供目的地精准天气预报，并根据天气调整行程建议</p>
+                </div>
+                <div class="feature-card fade-in delay-2">
+                    <div class="feature-icon">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <h3>一站式预订</h3>
+                    <p>机票、酒店、景点门票一键预订，VIP会员享受专属折扣和优先通道</p>
+                </div>
+                <div class="feature-card fade-in delay-3">
+                    <div class="feature-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3>24/7 AI客服</h3>
+                    <p>多语言智能客服随时解答您的疑问，处理行程变更和紧急情况</p>
+                </div>
+            </div>
+        </div>
+    </section>
+ 
+    <!-- 会员计划 -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="section-title fade-in">
+                <h2>选择适合您的会员计划</h2>
+                <p>升级会员解锁更多高级功能和专属优惠</p>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card fade-in delay-1">
+                    <h3>基础版</h3>
+                    <div class="price">免费</div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> 基本行程规划</li>
+                        <li><i class="fas fa-check"></i> 每日3次AI咨询</li>
+                        <li><i class="fas fa-check"></i> 基础景点推荐</li>
+                        <li><i class="fas fa-times"></i> 高级行程优化</li>
+                        <li><i class="fas fa-times"></i> 专属折扣</li>
+                        <li><i class="fas fa-times"></i> 优先客服</li>
+                    </ul>
+                    <a href="#" class="btn btn-outline" style="color: var(--dark); border-color: var(--dark);">当前计划</a>
+                </div>
+                <div class="pricing-card popular fade-in delay-2">
+                    <div class="popular-tag">推荐</div>
+                    <h3>高级版</h3>
+                    <div class="price">¥99<span>/月</span></div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> 智能行程规划</li>
+                        <li><i class="fas fa-check"></i> 无限AI咨询</li>
+                        <li><i class="fas fa-check"></i> 个性化推荐</li>
+                        <li><i class="fas fa-check"></i> 高级行程优化</li>
+                        <li><i class="fas fa-check"></i> 专属折扣(5-15%)</li>
+                        <li><i class="fas fa-times"></i> 优先客服</li>
+                    </ul>
+                    <a href="#" class="btn btn-primary">升级计划</a>
+                </div>
+                <div class="pricing-card fade-in delay-3">
+                    <h3>尊享版</h3>
+                    <div class="price">¥299<span>/月</span></div>
+                    <ul class="pricing-features">
+                        <li><i class="fas fa-check"></i> 智能行程规划</li>
+                        <li><i class="fas fa-check"></i> 无限AI咨询</li>
+                        <li><i class="fas fa-check"></i> 深度个性化推荐</li>
+                        <li><i class="fas fa-check"></i> 高级行程优化</li>
+                        <li><i class="fas fa-check"></i> 专属折扣(15-30%)</li>
+                        <li><i class="fas fa-check"></i> 24/7优先客服</li>
+                    </ul>
+                    <a href="#" class="btn btn-primary">升级计划</a>
+                </div>
+            </div>
+        </div>
+    </section>
+ 
+    <!-- AI导游界面 -->
+    <section class="ai-guide" id="guide">
+        <div class="container">
+            <div class="section-title fade-in">
+                <h2>AI智能导游助手</h2>
+                <p>与您的专属AI导游对话，获取实时旅行建议和解答</p>
+            </div>
+            <div class="guide-container">
+                <div class="guide-content fade-in delay-1">
+                    <h2 style="font-size: 32px; margin-bottom: 20px; color: var(--dark);">您的智能旅行伴侣</h2>
+                    <p style="margin-bottom: 30px; font-size: 16px; color: #555;">我们的AI导游基于阿里云百炼平台打造，整合了高德地图、天气API和多家旅行服务平台数据，能够为您提供：</p>
+                    <ul style="margin-bottom: 40px;">
+                        <li style="margin-bottom: 15px; display: flex; align-items: flex-start;">
+                            <i class="fas fa-check-circle" style="color: var(--secondary); margin-right: 10px; margin-top: 3px;"></i>
+                            <span>实时位置分析和路线建议</span>
+                        </li>
+                        <li style="margin-bottom: 15px; display: flex; align-items: flex-start;">
+                            <i class="fas fa-check-circle" style="color: var(--secondary); margin-right: 10px; margin-top: 3px;"></i>
+                            <span>基于天气和人流的智能行程调整</span>
+                        </li>
+                        <li style="margin-bottom: 15px; display: flex; align-items: flex-start;">
+                            <i class="fas fa-check-circle" style="color: var(--secondary); margin-right: 10px; margin-top: 3px;"></i>
+                            <span>多语言支持，覆盖全球旅行需求</span>
+                        </li>
+                        <li style="margin-bottom: 15px; display: flex; align-items: flex-start;">
+                            <i class="fas fa-check-circle" style="color: var(--secondary); margin-right: 10px; margin-top: 3px;"></i>
+                            <span>一键预订机票、酒店和景点门票</span>
+                        </li>
+                    </ul>
+                    <div style="background: #f5f7fa; padding: 20px; border-radius: var(--radius);">
+                        <p style="font-size: 14px; color: #777; margin-bottom: 10px;">VIP会员专享：</p>
+                        <p style="font-size: 15px; color: var(--dark);">升级会员可解锁更多高级功能，包括行程深度优化、专属折扣和24/7优先客服支持。</p>
+                    </div>
+                </div>
+                <div class="guide-interface fade-in delay-2">
+                    <div class="chat-container" id="chat-container">
+                        <div class="message ai">
+                            <div class="message-content">
+                                您好！我是您的AI导游助手。我可以帮助您规划行程、推荐景点、查询天气和预订服务。您今天想去哪里旅行？
+                            </div>
+                        </div>
+                        <div class="message user">
+                            <div class="message-content">
+                                我想规划一个上海三日游 
+                            </div>
+                        </div>
+                        <div class="message ai">
+                            <div class="message-content">
+                                好的，上海是个很棒的选择！我可以为您规划一个包含外滩、豫园、迪士尼乐园等经典景点的行程。您对什么类型的景点更感兴趣？历史人文、现代都市还是自然风光？
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" placeholder="输入您的问题或需求...">
+                        <button><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+ 
+    <!-- 地图区域 -->
+    <section class="map-section">
+        <div id="map"></div>
+        <div class="map-overlay fade-in delay-2">
+            <h3 style="margin-bottom: 10px; color: var(--dark);">实时位置服务</h3>
+            <p style="margin-bottom: 15px; font-size: 14px; color: #555;">我们整合高德地图API，为您提供精准的实时导航和人流分析。</p>
+            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                <i class="fas fa-user" style="color: var(--primary); margin-right: 10px;"></i>
+                <span style="font-size: 13px;">您当前的位置：上海市黄浦区</span>
+            </div>
+            <div style="display: flex; align-items: center;">
+                <i class="fas fa-users" style="color: var(--accent); margin-right: 10px;"></i>
+                <span style="font-size: 13px;">外滩当前人流：中等</span>
+            </div>
+        </div>
+    </section>
+ 
+    <!-- 行程规划 -->
+    <section class="itinerary" id="itinerary">
+        <div class="container">
+            <div class="section-title fade-in">
+                <h2>您的智能行程规划</h2>
+                <p>AI生成的个性化旅行计划，可根据您的反馈实时调整</p>
+            </div>
+            <div class="itinerary-card fade-in delay-1">
+                <div class="day-header">
+                    <div class="day-title">第一天 - 城市经典</div>
+                    <div class="day-date">2025年5月15日，星期四</div>
+                </div>
+                <div class="activity">
+                    <div class="activity-time">09:00-11:00</div>
+                    <div class="activity-details">
+                        <div class="activity-title">上海博物馆</div>
+                        <div class="activity-location">
+                            <i class="fas fa-map-marker-alt"></i> 黄浦区人民大道201号 
+                        </div>
+                        <div class="activity-description">
+                            探索中国五千年文明的珍贵文物收藏，建议提前在线预约门票避免排队。
+                        </div>
+                    </div>
+                </div>
+                <div class="activity">
+                    <div class="activity-time">11:30-13:30</div>
+                    <div class="activity-details">
+                        <div class="activity-title">午餐 - 南翔馒头店</div>
+                        <div class="activity-location">
+                            <i class="fas fa-map-marker-alt"></i> 黄浦区豫园路85号 
+                        </div>
+                        <div class="activity-description">
+                            品尝上海著名的小笼包和其他本帮小吃，这家百年老店是体验上海美食的绝佳选择。
+                        </div>
+                    </div>
+                </div>
+                <div class="activity">
+                    <div class="activity-time">14:00-17:00</div>
+                    <div class="activity-details">
+                        <div class="activity-title">豫园及周边</div>
+                        <div class="activity-location">
+                            <i class="fas fa-map-marker-alt"></i> 黄浦区安仁街218号 
+                        </div>
+                        <div class="activity-description">
+                            游览这座明代古典园林，然后探索周边的老街和传统商铺。VIP会员可享受快速通道。
+                        </div>
+                    </div>
+                </div>
+                <div class="activity">
+                    <div class="activity-time">19:00-21:00</div>
+                    <div class="activity-details">
+                        <div class="activity-title">外滩夜景</div>
+                        <div class="activity-location">
+                            <i class="fas fa-map-marker-alt"></i> 黄浦区中山东一路 
+                        </div>
+                        <div class="activity-description">
+                            欣赏黄浦江两岸的壮观夜景，浦东的现代摩天大楼与浦西的历史建筑形成鲜明对比。
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="#" class="btn btn-primary" style="padding: 15px 40px;">
+                    <i class="fas fa-sync-alt" style="margin-right: 10px;"></i> 重新规划行程 
+                </a>
+                <a href="#" class="btn btn-secondary" style="padding: 15px 40px; margin-left: 20px;">
+                    <i class="fas fa-calendar-check" style="margin-right: 10px;"></i> 确认并预订 
+                </a>
+            </div>
+        </div>
+    </section>
+ 
+    <!-- 底部 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>VoyageAI</h3>
+                    <p style="color: #bbb; margin-bottom: 20px;">您的智能旅行规划专家，基于AI技术提供端到端的旅行解决方案。</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-weixin"></i></a>
+                        <a href="#"><i class="fab fa-weibo"></i></a>
+                        <a href="#"><i class="fab fa-zhihu"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h3>产品</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">AI导游</a></li>
+                        <li><a href="#">行程规划</a></li>
+                        <li><a href="#">地图导航</a></li>
+                        <li><a href="#">美食推荐</a></li>
+                        <li><a href="#">会员计划</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>资源</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">帮助中心</a></li>
+                        <li><a href="#">API文档</a></li>
+                        <li><a href="#">旅行博客</a></li>
+                        <li><a href="#">城市指南</a></li>
+                        <li><a href="#">合作伙伴</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>公司</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">关于我们</a></li>
+                        <li><a href="#">职业发展</a></li>
+                        <li><a href="#">新闻中心</a></li>
+                        <li><a href="#">联系方式</a></li>
+                        <li><a href="#">隐私政策</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                &copy; 2025 VoyageAI. 保留所有权利。基于阿里云百炼平台打造。
+            </div>
+        </div>
+    </footer>
+ 
+    <script>
+        // 简单的聊天交互模拟 
+        document.querySelector('.chat-input  button').addEventListener('click', function() {
+            const input = document.querySelector('.chat-input  input');
+            const message = input.value.trim(); 
+            
+            if (message) {
+                // 添加用户消息 
+                addMessage(message, 'user');
+                input.value  = '';
+                
+                // 模拟AI回复 
+                setTimeout(() => {
+                    const responses = [
+                        "我了解了您的需求，正在为您规划最佳行程...",
+                        "这是一个很棒的选择！我已经找到了一些适合您的景点。",
+                        "基于您的位置和偏好，我推荐以下几个活动。",
+                        "我可以为您预订相关服务，您需要吗？"
+                    ];
+                    const randomResponse = responses[Math.floor(Math.random() * responses.length)]; 
+                    addMessage(randomResponse, 'ai');
+                }, 1000);
+            }
+        });
+        
+        function addMessage(text, sender) {
+            const chatContainer = document.getElementById('chat-container'); 
+            const messageDiv = document.createElement('div'); 
+            messageDiv.className  = `message ${sender}`;
+            messageDiv.innerHTML  = `<div class="message-content">${text}</div>`;
+            chatContainer.appendChild(messageDiv); 
+            chatContainer.scrollTop  = chatContainer.scrollHeight; 
+        }
+        
+        // 模拟地图初始化 
+        function initMap() {
+            // 这里应该是高德地图API的初始化代码 
+            console.log(" 地图初始化...");
+        }
+        
+        // 页面加载时初始化地图 
+        window.onload  = initMap;
+        
+        // 平滑滚动 
+        document.querySelectorAll('a[href^="#"]').forEach(anchor  => {
+            anchor.addEventListener('click',  function (e) {
+                e.preventDefault(); 
+                document.querySelector(this.getAttribute('href')).scrollIntoView({ 
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // 滚动动画 
+        const fadeElements = document.querySelectorAll('.fade-in'); 
+        
+        const fadeInOnScroll = function() {
+            fadeElements.forEach(element  => {
+                const elementTop = element.getBoundingClientRect().top; 
+                const windowHeight = window.innerHeight; 
+                
+                if (elementTop < windowHeight - 100) {
+                    element.style.opacity  = 1;
+                    element.style.transform  = 'translateY(0)';
+                }
+            });
+        };
+        
+        window.addEventListener('scroll',  fadeInOnScroll);
+        fadeInOnScroll(); // 初始化时执行一次 
+    </script>
+</body>
+</html>
